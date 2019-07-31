@@ -7,6 +7,8 @@ import time
 import datetime
 import pandas as pd
 
+import selfDefKits as dk
+
 '''
 输入——
 必须两个参数：
@@ -17,46 +19,7 @@ import pandas as pd
 屏幕输出进度、错误信息等；同时将结果输出到以第一个文件名+时间戳的一个txt文件，
 比如如果第一个文件名是“/tmp/123.xls”，则输出文件名将为“/tmp/123.xls_201907281223.txt”
 '''
-def IsPtInPoly(aLon, aLat, pointList):
-    '''
-    :param aLon: double 经度
-    :param aLat: double 纬度
-    :param pointList: list [(lon, lat)...] 多边形点的顺序需根据顺时针或逆时针，不能乱
-    '''
-    
-    iSum = 0
-    iCount = len(pointList)
-    
-    if(iCount < 3):
-        return False
-    
-    
-    for i in range(iCount):
-        
-        pLon1 = pointList[i][0]
-        pLat1 = pointList[i][1]
-        
-        if(i == iCount - 1):
-            
-            pLon2 = pointList[0][0]
-            pLat2 = pointList[0][1]
-        else:
-            pLon2 = pointList[i + 1][0]
-            pLat2 = pointList[i + 1][1]
-        
-        if ((aLat >= pLat1) and (aLat < pLat2)) or ((aLat>=pLat2) and (aLat < pLat1)):
-            
-            if (abs(pLat1 - pLat2) > 0):
-                
-                pLon = pLon1 - ((pLon1 - pLon2) * (pLat1 - aLat)) / (pLat1 - pLat2);
-                
-                if(pLon < aLon):
-                    iSum += 1
- 
-    if(iSum % 2 != 0):
-        return True
-    else:
-        return False
+
 
 def isPtIn():
     starttime = time
@@ -79,11 +42,14 @@ def isPtIn():
         plpts = getattr(pl, 'POLYGON')
         # print(getattr(pl, 'NAME') + ":" + poly)
         # print("*****")
+        '''
         plpts = plpts.replace(",0 ", ",").replace(",0", "")
         plpts_array = plpts.split(",")
         plpts = map(eval, plpts_array)
-        poly = []
+        '''
+        poly = dk.getPolyArr(plpts)
         iaa = []
+        '''
         if (len(plpts) % 2 == 0):
             i = 0
             parray = []
@@ -97,6 +63,7 @@ def isPtIn():
                     parray = []
         else:
             print("worng" + len(plpts))
+        '''
         iaa.append(poly)
         iaa.append(getattr(pl, 'DP'))
         iaa.append(getattr(pl, 'SEC_NUM'))
@@ -114,7 +81,7 @@ def isPtIn():
         perc = '{:.2f}'.format(float(pg_i) / float(pg_total) * 100)
         # continue # for debug
         for iaa in IAAs:
-            if (IsPtInPoly(getattr(pt, 'LON'), getattr(pt, 'LAT'), iaa[0])):
+            if (dk.isPtInPoly(getattr(pt, 'LON'), getattr(pt, 'LAT'), iaa[0])):
                 line = (
                     getattr(pt, 'DP') + ";" + getattr(pt, 'AC_NUM') + ";"
                     + str(getattr(pt, 'LON')) + ";" + str(getattr(pt, 'LAT')) + ";"
