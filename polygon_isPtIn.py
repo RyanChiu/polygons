@@ -58,23 +58,6 @@ def IsPtInPoly(aLon, aLat, pointList):
     else:
         return False
 
-'''
-# the following lines are for debug
-poly = [
-    [113.3229642216917,23.13612639347015], 
-    [113.322559275276,23.13005230049122], 
-    [113.3306848084265,23.12939050720481],
-    [113.3301245455429,23.13597562831565],
-    [113.3229642216917,23.13612639347015]
-]
-
-if (IsPtInPoly(113.31791,23.135187, poly)):
-    print("IN!")
-else:
-    print("OUT!")
-# exit() #for debug
-'''
-
 def isPtIn():
     starttime = time
     print(starttime.strftime('%Y%m%d-%H:%M:%S') + ", starts:")
@@ -82,7 +65,7 @@ def isPtIn():
     if (len(sys.argv) != 3):
         print("Please give 2 xls/xlsx files, the 1st one continas the points, and the 2nd one contains the polygons.")
         exit()
-    print("reading 2 files...")
+    print("loading the files...")
     pts = pd.read_excel(sys.argv[1], encoding = "utf-8")
     pts.fillna("empty", inplace = True)
     pls = pd.read_excel(sys.argv[2], encoding = "utf-8")
@@ -142,9 +125,10 @@ def isPtIn():
         sys.stdout.write("\r" + str(pg_i) + "/" + str(pg_total) + ", " + str(perc) + "%")
         sys.stdout.flush()
 
-    print("\nwriting...")
     dtnow = datetime.datetime.now()
-    fh = open(sys.argv[1] + "-" + dtnow.strftime('%Y%m%d%H%M%S') + "_ptinpl.txt", mode = 'w')
+    fn = sys.argv[1] + "-" + dtnow.strftime('%Y%m%d%H%M%S') + "_ptinpl.txt"
+    print("\nwriting into " + fn + "")
+    fh = open(fn, mode = 'w')
     fh.writelines(lines)
     # main process ends
 
